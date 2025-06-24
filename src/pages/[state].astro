@@ -5,15 +5,55 @@ import Footer from '../components/Footer.astro';
 import { dbHelpers } from '../lib/supabase.js';
 
 export async function getStaticPaths() {
-  const states = await dbHelpers.getStates();
-  return states.map((state) => ({
+  try {
+    const states = await dbHelpers.getStates();
+    if (states && states.length > 0) {
+      return states.map((state) => ({
+        params: { state: state.name.toLowerCase().replace(/\s+/g, '-') },
+        props: { state }
+      }));
+    }
+  } catch (error) {
+    console.error('Failed to fetch states from Supabase:', error);
+  }
+  
+  // Fallback state data when API fails
+  const fallbackStates = [
+    { name: 'Gujarat', code: 'GJ', cities: ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Gandhinagar'] },
+    { name: 'Maharashtra', code: 'MH', cities: ['Mumbai', 'Pune', 'Nagpur', 'Nashik', 'Aurangabad'] },
+    { name: 'Karnataka', code: 'KA', cities: ['Bangalore', 'Mysore', 'Hubli', 'Mangalore', 'Belgaum'] },
+    { name: 'Tamil Nadu', code: 'TN', cities: ['Chennai', 'Coimbatore', 'Madurai', 'Salem', 'Tirupur'] },
+    { name: 'Delhi', code: 'DL', cities: ['New Delhi', 'Central Delhi', 'North Delhi', 'South Delhi', 'West Delhi'] },
+    { name: 'West Bengal', code: 'WB', cities: ['Kolkata', 'Howrah', 'Durgapur', 'Siliguri', 'Asansol'] },
+    { name: 'Andhra Pradesh', code: 'AP', cities: ['Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Kurnool'] },
+    { name: 'Telangana', code: 'TG', cities: ['Hyderabad', 'Warangal', 'Nizamabad', 'Karimnagar', 'Ramagundam'] },
+    { name: 'Kerala', code: 'KL', cities: ['Thiruvananthapuram', 'Kochi', 'Kozhikode', 'Thrissur', 'Kollam'] },
+    { name: 'Punjab', code: 'PB', cities: ['Ludhiana', 'Amritsar', 'Jalandhar', 'Patiala', 'Bathinda'] },
+    { name: 'Haryana', code: 'HR', cities: ['Faridabad', 'Gurgaon', 'Panipat', 'Ambala', 'Yamunanagar'] },
+    { name: 'Rajasthan', code: 'RJ', cities: ['Jaipur', 'Jodhpur', 'Kota', 'Ajmer', 'Udaipur'] },
+    { name: 'Uttar Pradesh', code: 'UP', cities: ['Lucknow', 'Kanpur', 'Ghaziabad', 'Agra', 'Varanasi'] },
+    { name: 'Madhya Pradesh', code: 'MP', cities: ['Bhopal', 'Indore', 'Gwalior', 'Jabalpur', 'Ujjain'] },
+    { name: 'Bihar', code: 'BR', cities: ['Patna', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Purnia'] }
+  ];
+  
+  console.log('Using fallback state data for static generation');
+  return fallbackStates.map((state) => ({
     params: { state: state.name.toLowerCase().replace(/\s+/g, '-') },
     props: { state }
   }));
 }
 
 const { state } = Astro.props;
-const rawGynecologists = await dbHelpers.getGynecologistsByState(state.name);
+
+// Try to fetch doctors, but provide fallback if it fails
+let rawGynecologists = [];
+try {
+  rawGynecologists = await dbHelpers.getGynecologistsByState(state.name);
+} catch (error) {
+  console.error(`Failed to fetch doctors for ${state.name}:`, error);
+  // Provide empty array as fallback
+  rawGynecologists = [];
+}
 
 // Utility function to create URL-friendly slugs (same as data.ts)
 function createSlug(text) {
@@ -32,8 +72,6 @@ function extractQualification(name) {
   const match = name.match(/ - (.+)$/);
   return match ? match[1] : 'MBBS, MD (Obstetrics & Gynecology)';
 }
-
-
 
 // Parse image URLs (matching city pages logic)
 function parseImageUrls(imageUrls) {

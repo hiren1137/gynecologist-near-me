@@ -1,12 +1,18 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Supabase configuration - support both Astro and Node.js environments
+// Supabase configuration - Vercel-compatible environment variable handling
 const getEnvVar = (key, fallback) => {
-  // Try Astro/Vite environment first, then Node.js process.env
-  if (typeof import.meta !== 'undefined' && import.meta.env) {
-    return import.meta.env[key] || fallback
+  // For Vercel builds, prioritize process.env
+  if (typeof process !== 'undefined' && process.env && process.env[key]) {
+    return process.env[key];
   }
-  return process.env[key] || fallback
+  
+  // For Astro/Vite environment (development)
+  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) {
+    return import.meta.env[key];
+  }
+  
+  return fallback;
 }
 
 // Use environment variables or fallback to hardcoded values
@@ -14,14 +20,16 @@ const supabaseUrl = getEnvVar('SUPABASE_URL', 'https://cajddzsauxliholgbsfi.supa
 const supabaseAnonKey = getEnvVar('SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNhamRkenNhdXhsaWhvbGdic2ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5NzU3MjQsImV4cCI6MjA2NTU1MTcyNH0.Synv7-xMkCFONnVlsXTg9sj8uPwOpn0yPPdl3ODhE24')
 const supabaseServiceKey = getEnvVar('SUPABASE_SERVICE_ROLE_KEY', 'sbp_933f5607a695f85b2ace589c46459019715af7ac')
 
-// Debug: Log configuration in development
-if (import.meta.env && import.meta.env.DEV) {
-  console.log('🔧 Supabase Config:', {
-    url: supabaseUrl,
-    anonKey: supabaseAnonKey.substring(0, 20) + '...',
-    serviceKey: supabaseServiceKey.substring(0, 20) + '...'
-  });
-}
+// Debug environment variables
+console.log('🔧 Environment Check:', {
+  NODE_ENV: typeof process !== 'undefined' ? process.env.NODE_ENV : 'unknown',
+  VERCEL: typeof process !== 'undefined' ? process.env.VERCEL : 'unknown',
+  hasSupabaseUrl: !!supabaseUrl,
+  hasAnonKey: !!supabaseAnonKey,
+  hasServiceKey: !!supabaseServiceKey,
+  urlSource: process?.env?.SUPABASE_URL ? 'process.env' : (import.meta?.env?.SUPABASE_URL ? 'import.meta.env' : 'fallback'),
+  serviceKeyLength: supabaseServiceKey?.length || 0
+});
 
 // Create Supabase clients
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {

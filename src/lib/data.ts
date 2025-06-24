@@ -63,7 +63,11 @@ export interface StateData {
 
 // Utility function to create URL-friendly slugs
 export function createSlug(text: string): string {
-  return text
+  if (!text || text.trim() === '') {
+    return 'doctor'; // Fallback for empty text
+  }
+  
+  const slug = text
     .toLowerCase()
     .replace(/dr\.?\s*/gi, 'dr-') // Handle "Dr." prefix
     .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except hyphens
@@ -71,6 +75,9 @@ export function createSlug(text: string): string {
     .replace(/-+/g, '-') // Replace multiple hyphens with single
     .replace(/^-|-$/g, '') // Remove leading/trailing hyphens
     .trim();
+  
+  // If still empty after processing, return fallback
+  return slug || 'doctor';
 }
 
 // Transform Supabase data to Doctor interface
@@ -396,11 +403,14 @@ export async function getAllStateCityDoctorCombinations(): Promise<Array<{state:
     try {
       const doctors = await getDoctorsForCity(combo.state, combo.city);
       doctors.forEach(doctor => {
-        combinations.push({
-          state: combo.state,
-          city: combo.city,
-          doctor: doctor.slug
-        });
+        // Only include doctors with valid non-empty slugs
+        if (doctor.slug && doctor.slug.trim() !== '') {
+          combinations.push({
+            state: combo.state,
+            city: combo.city,
+            doctor: doctor.slug
+          });
+        }
       });
     } catch (error) {
       console.error(`Error fetching doctors for ${combo.state}/${combo.city}:`, error);

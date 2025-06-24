@@ -9,18 +9,66 @@ const getEnvVar = (key, fallback) => {
   return process.env[key] || fallback
 }
 
+// Use environment variables or fallback to hardcoded values
 const supabaseUrl = getEnvVar('SUPABASE_URL', 'https://cajddzsauxliholgbsfi.supabase.co')
 const supabaseAnonKey = getEnvVar('SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNhamRkenNhdXhsaWhvbGdic2ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5NzU3MjQsImV4cCI6MjA2NTU1MTcyNH0.Synv7-xMkCFONnVlsXTg9sj8uPwOpn0yPPdl3ODhE24')
 const supabaseServiceKey = getEnvVar('SUPABASE_SERVICE_ROLE_KEY', 'sbp_933f5607a695f85b2ace589c46459019715af7ac')
 
-// Create Supabase client for public operations
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Debug: Log configuration in development
+if (import.meta.env && import.meta.env.DEV) {
+  console.log('🔧 Supabase Config:', {
+    url: supabaseUrl,
+    anonKey: supabaseAnonKey.substring(0, 20) + '...',
+    serviceKey: supabaseServiceKey.substring(0, 20) + '...'
+  });
+}
 
-// Create Supabase client with service role for admin operations
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+// Create Supabase clients
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: false
+  },
+  global: {
+    headers: {
+      'User-Agent': 'gynecologist-near-me/1.0'
+    }
+  }
+});
+
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    persistSession: false
+  },
+  global: {
+    headers: {
+      'User-Agent': 'gynecologist-near-me/1.0'
+    }
+  }
+});
+
+// Test connection function
+async function testConnection() {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('gynecologists_stage')
+      .select('count', { count: 'exact', head: true })
+      .limit(1);
+    
+    if (error) {
+      console.error('❌ Supabase connection test failed:', error);
+      return false;
+    }
+    
+    console.log('✅ Supabase connection successful');
+    return true;
+  } catch (error) {
+    console.error('❌ Supabase connection error:', error);
+    return false;
+  }
+}
 
 // For this public website, we need to use service role for data fetching due to RLS policies
-const dataClient = supabaseAdmin
+const dataClient = supabaseAdmin;
 
 // Cache for static data to prevent repeated API calls
 const cache = {

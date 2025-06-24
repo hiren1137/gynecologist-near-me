@@ -5,79 +5,28 @@ import Footer from '../../components/Footer.astro';
 import { getAllStateCityCombinations, getDoctorsForCity } from '../../lib/data';
 
 export async function getStaticPaths() {
-  try {
-    const combinations = await getAllStateCityCombinations();
-    
-    if (combinations && combinations.length > 0) {
-      const paths = await Promise.all(combinations.map(async ({ state, city }) => {
-        try {
-          const doctors = await getDoctorsForCity(state, city);
-          return {
-            params: { city },
-            props: { 
-              cityName: city.charAt(0).toUpperCase() + city.slice(1).replace(/-/g, ' '),
-              stateName: state.charAt(0).toUpperCase() + state.slice(1).replace(/-/g, ' '),
-              stateSlug: state,
-              citySlug: city,
-              doctors
-            }
-          };
-        } catch (error) {
-          console.error(`Failed to fetch doctors for ${city}:`, error);
-          return {
-            params: { city },
-            props: { 
-              cityName: city.charAt(0).toUpperCase() + city.slice(1).replace(/-/g, ' '),
-              stateName: state.charAt(0).toUpperCase() + state.slice(1).replace(/-/g, ' '),
-              stateSlug: state,
-              citySlug: city,
-              doctors: []
-            }
-          };
-        }
-      }));
-      
-      return paths;
-    }
-  } catch (error) {
-    console.error('Failed to fetch state-city combinations from Supabase:', error);
+  const combinations = await getAllStateCityCombinations();
+  
+  if (!combinations || combinations.length === 0) {
+    console.error('No state-city combinations found from Supabase');
+    throw new Error('Failed to fetch state-city combinations from Supabase');
   }
   
-  // Fallback city data when API fails
-  const fallbackCities = [
-    { state: 'gujarat', city: 'ahmedabad', stateName: 'Gujarat' },
-    { state: 'gujarat', city: 'surat', stateName: 'Gujarat' },
-    { state: 'gujarat', city: 'vadodara', stateName: 'Gujarat' },
-    { state: 'gujarat', city: 'rajkot', stateName: 'Gujarat' },
-    { state: 'maharashtra', city: 'mumbai', stateName: 'Maharashtra' },
-    { state: 'maharashtra', city: 'pune', stateName: 'Maharashtra' },
-    { state: 'maharashtra', city: 'nagpur', stateName: 'Maharashtra' },
-    { state: 'karnataka', city: 'bangalore', stateName: 'Karnataka' },
-    { state: 'karnataka', city: 'mysore', stateName: 'Karnataka' },
-    { state: 'tamil-nadu', city: 'chennai', stateName: 'Tamil Nadu' },
-    { state: 'tamil-nadu', city: 'coimbatore', stateName: 'Tamil Nadu' },
-    { state: 'delhi', city: 'new-delhi', stateName: 'Delhi' },
-    { state: 'west-bengal', city: 'kolkata', stateName: 'West Bengal' },
-    { state: 'telangana', city: 'hyderabad', stateName: 'Telangana' },
-    { state: 'kerala', city: 'thiruvananthapuram', stateName: 'Kerala' },
-    { state: 'kerala', city: 'kochi', stateName: 'Kerala' },
-    { state: 'punjab', city: 'ludhiana', stateName: 'Punjab' },
-    { state: 'haryana', city: 'gurgaon', stateName: 'Haryana' },
-    { state: 'rajasthan', city: 'jaipur', stateName: 'Rajasthan' },
-    { state: 'uttar-pradesh', city: 'lucknow', stateName: 'Uttar Pradesh' }
-  ];
-  
-  console.log('Using fallback city data for static generation');
-  return fallbackCities.map(({ state, city, stateName }) => ({
-    params: { city },
-    props: { 
-      cityName: city.charAt(0).toUpperCase() + city.slice(1).replace(/-/g, ' '),
-      stateName: stateName,
-      stateSlug: state,
-      citySlug: city,
-      doctors: []
-    }
+  const paths = await Promise.all(combinations.map(async ({ state, city }) => {
+    const doctors = await getDoctorsForCity(state, city);
+    return {
+      params: { city },
+      props: { 
+        cityName: city.charAt(0).toUpperCase() + city.slice(1).replace(/-/g, ' '),
+        stateName: state.charAt(0).toUpperCase() + state.slice(1).replace(/-/g, ' '),
+        stateSlug: state,
+        citySlug: city,
+        doctors
+      }
+    };
   }));
+  
+  return paths;
 }
 
 const { cityName, stateName, stateSlug, citySlug, doctors } = Astro.props;

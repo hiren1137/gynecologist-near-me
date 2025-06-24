@@ -399,24 +399,44 @@ export async function getAllStateCityDoctorCombinations(): Promise<Array<{state:
   const combinations: Array<{state: string, city: string, doctor: string}> = [];
   const stateCityCombos = await getAllStateCityCombinations();
   
-  for (const combo of stateCityCombos.slice(0, 50)) { // Limit for performance
-    try {
-      const doctors = await getDoctorsForCity(combo.state, combo.city);
-      doctors.forEach(doctor => {
-        // Only include doctors with valid non-empty slugs
-        if (doctor.slug && doctor.slug.trim() !== '') {
-          combinations.push({
-            state: combo.state,
-            city: combo.city,
-            doctor: doctor.slug
-          });
+  console.log(`📊 Processing ${stateCityCombos.length} cities for doctor pages...`);
+  
+  // Process all cities, but in batches to avoid timeouts
+  const batchSize = 10;
+  for (let i = 0; i < stateCityCombos.length; i += batchSize) {
+    const batch = stateCityCombos.slice(i, i + batchSize);
+    console.log(`🔄 Processing cities batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(stateCityCombos.length/batchSize)} (${batch.length} cities)`);
+    
+    const batchPromises = batch.map(async (combo) => {
+      try {
+        const doctors = await getDoctorsForCity(combo.state, combo.city);
+        const validDoctors = doctors.filter(doctor => doctor.slug && doctor.slug.trim() !== '');
+        
+        if (validDoctors.length > 0) {
+          console.log(`✅ Found ${validDoctors.length} doctors in ${combo.city}`);
         }
-      });
-    } catch (error) {
-      console.error(`Error fetching doctors for ${combo.state}/${combo.city}:`, error);
+        
+        return validDoctors.map(doctor => ({
+          state: combo.state,
+          city: combo.city,
+          doctor: doctor.slug
+        }));
+      } catch (error) {
+        console.error(`❌ Error fetching doctors for ${combo.state}/${combo.city}:`, error);
+        return [];
+      }
+    });
+    
+    const batchResults = await Promise.all(batchPromises);
+    batchResults.forEach(result => combinations.push(...result));
+    
+    // Small delay to prevent overwhelming the database
+    if (i + batchSize < stateCityCombos.length) {
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
   }
   
+  console.log(`🎉 Generated ${combinations.length} doctor profile pages`);
   return combinations;
 }
 

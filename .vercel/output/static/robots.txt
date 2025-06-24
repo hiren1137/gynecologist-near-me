@@ -1,0 +1,48 @@
+User-agent: *
+Allow: /
+
+# Allow all major search engine bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+# Disallow admin/test pages (if any exist in future)
+Disallow: /admin/
+Disallow: /test/
+Disallow: /debug/
+Disallow: /temp/
+
+# Allow important directories
+Allow: /city/
+Allow: /city/*/
+Allow: /city/*/*
+Allow: /doctor/
+Allow: /about
+Allow: /contact
+Allow: /find-doctor
+Allow: /privacy
+Allow: /terms
+
+# Explicitly allow doctor profile pages
+Allow: /city/*/dr-*
+Allow: /city/*/doctor-*
+
+# Sitemap location
+Sitemap: https://gynecologistnearme.in/sitemap.xml
+
+# Crawl-delay (1 second to be respectful)
+Crawl-delay: 1
+
+# Host directive (helps with canonicalization)
+Host: https://gynecologistnearme.in 

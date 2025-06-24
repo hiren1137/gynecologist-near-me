@@ -1,0 +1,74 @@
+---
+import { dbHelpers } from '../lib/supabase.js';
+
+// Quick test of individual functions
+let results = {
+  maharashtraDocs: 0,
+  soporeDocs: 0,
+  searchDocs: 0,
+  error: null
+};
+
+try {
+  // Test state filter
+  const maharashtraDoctors = await dbHelpers.getGynecologistsByState('Maharashtra');
+  results.maharashtraDocs = maharashtraDoctors.length;
+  
+  // Test city filter
+  const soporeDoctors = await dbHelpers.getGynecologistsByCity('Sopore');
+  results.soporeDocs = soporeDoctors.length;
+  
+  // Test search
+  const searchDoctors = await dbHelpers.searchGynecologistsByName('Dr');
+  results.searchDocs = searchDoctors.length;
+  
+} catch (error) {
+  results.error = error.message;
+}
+---
+
+<html>
+<head>
+  <title>Quick Filter Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; }
+    .result { padding: 1rem; margin: 1rem 0; border: 1px solid #ccc; }
+    .success { background: #d4edda; border-color: #c3e6cb; }
+    .error { background: #f8d7da; border-color: #f5c6cb; }
+  </style>
+</head>
+<body>
+  <h1>Quick Filter Function Test</h1>
+  
+  {results.error ? (
+    <div class="result error">
+      <h3>❌ Error</h3>
+      <p>{results.error}</p>
+    </div>
+  ) : (
+    <>
+      <div class="result success">
+        <h3>✅ Maharashtra State Filter</h3>
+        <p>Found: {results.maharashtraDocs} doctors</p>
+      </div>
+      
+      <div class="result success">
+        <h3>✅ Sopore City Filter</h3>
+        <p>Found: {results.soporeDocs} doctors</p>
+      </div>
+      
+      <div class="result success">
+        <h3>✅ Search for "Dr"</h3>
+        <p>Found: {results.searchDocs} doctors</p>
+      </div>
+    </>
+  )}
+  
+  <h3>Test URLs:</h3>
+  <ul>
+    <li><a href="/find-doctor?state=Maharashtra">Test Maharashtra on Find Doctor page</a></li>
+    <li><a href="/find-doctor?city=Sopore">Test Sopore on Find Doctor page</a></li>
+    <li><a href="/find-doctor?search=Dr">Test Search on Find Doctor page</a></li>
+  </ul>
+</body>
+</html> 

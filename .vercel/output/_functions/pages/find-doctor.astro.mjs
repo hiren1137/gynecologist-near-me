@@ -1,0 +1,63 @@
+import { c as createComponent, f as renderComponent, e as renderTemplate, m as maybeRenderHead, b as addAttribute } from '../chunks/astro/server_Dv5ekixa.mjs';
+import 'kleur/colors';
+import { $ as $$Layout } from '../chunks/Layout_BZG9JB33.mjs';
+import { $ as $$Header, a as $$Footer } from '../chunks/Footer_C7dY-lBu.mjs';
+export { renderers } from '../renderers.mjs';
+
+const $$FindDoctor = createComponent(($$result, $$props, $$slots) => {
+  const popularSearchQueries = [
+    { query: "Best Gynecologist in Ahmedabad", city: "ahmedabad", state: "Gujarat" },
+    { query: "Top Gynecologist in Mumbai", city: "mumbai", state: "Maharashtra" },
+    { query: "Best Gynecologist in Bangalore", city: "bangalore", state: "Karnataka" },
+    { query: "Top Gynecologist in Delhi", city: "delhi", state: "Delhi" },
+    { query: "Best Gynecologist in Pune", city: "pune", state: "Maharashtra" },
+    { query: "Top Gynecologist in Hyderabad", city: "hyderabad", state: "Telangana" },
+    { query: "Best Gynecologist in Chennai", city: "chennai", state: "Tamil Nadu" },
+    { query: "Top Gynecologist in Kolkata", city: "kolkata", state: "West Bengal" },
+    { query: "Best Gynecologist in Sopore", city: "sopore", state: "Jammu and Kashmir" },
+    { query: "Top Gynecologist in Thrissur", city: "thrissur", state: "Kerala" },
+    { query: "Best Gynecologist in Raiganj", city: "raiganj", state: "West Bengal" },
+    { query: "Top Gynecologist in Belonia", city: "belonia", state: "Tripura" },
+    { query: "Best Gynecologist in Thoubal", city: "thoubal", state: "Manipur" },
+    { query: "Top Gynecologist in Imphal", city: "imphal", state: "Manipur" },
+    { query: "Best Gynecologist in Howrah", city: "howrah", state: "West Bengal" },
+    { query: "Top Gynecologist in Itanagar", city: "itanagar", state: "Arunachal Pradesh" },
+    { query: "Best Gynecologist in Malegaon", city: "malegaon", state: "Maharashtra" },
+    { query: "Top Gynecologist in Tezpur", city: "tezpur", state: "Assam" },
+    { query: "Best Gynecologist in Sagar", city: "sagar", state: "Madhya Pradesh" },
+    { query: "Top Gynecologist in Namchi", city: "namchi", state: "Sikkim" },
+    { query: "Best Gynecologist in Churachandpur", city: "churachandpur", state: "Manipur" },
+    { query: "Top Gynecologist in Vasco da Gama", city: "vasco-da-gama", state: "Goa" },
+    { query: "Best Gynecologist in Ramagundam", city: "ramagundam", state: "Telangana" },
+    { query: "Top Gynecologist in Gyalshing", city: "gyalshing", state: "Sikkim" }
+  ];
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": "Find Doctor - Search Best Gynecologists Near You | Gynecologist Near Me", "description": "Find the best gynecologists in your city. Search popular queries like 'Best Gynecologist in Mumbai', 'Top Gynecologist in Delhi' and more.", "keywords": "find gynecologist, best gynecologist, top gynecologist, women doctor, OBGYN, gynecology specialist, women's health" }, { "default": ($$result2) => renderTemplate` ${renderComponent($$result2, "Header", $$Header, {})} ${maybeRenderHead()}<main> <!-- Hero Section --> <section class="bg-gradient-to-br from-pink-50 to-purple-50 py-16"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="text-center"> <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+Find the <span class="text-pink-600">Best Gynecologist</span> Near You
+</h1> <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+Search for top-rated gynecologists in your city. Browse popular searches and find the right healthcare provider for your needs.
+</p> </div> </div> </section> <!-- Popular Search Queries --> <section class="py-16 bg-white"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="text-center mb-12"> <h2 class="text-3xl font-bold text-gray-900 mb-4">Popular Searches</h2> <p class="text-lg text-gray-600">Click on any search query to find gynecologists in that city</p> </div> <!-- City-based Search Queries --> <div class="mb-16"> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"> ${popularSearchQueries.map((item) => renderTemplate`<a${addAttribute(`/city/${item.city}`, "href")} class="bg-gradient-to-r from-pink-50 to-purple-50 hover:from-pink-100 hover:to-purple-100 border border-pink-200 rounded-xl p-6 text-center transition-all duration-300 hover:shadow-lg hover:scale-105 group"> <div class="w-12 h-12 bg-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-pink-700 transition-colors"> <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path> </svg> </div> <h4 class="font-semibold text-gray-900 mb-2 text-lg">${item.query}</h4> <p class="text-sm text-gray-600">${item.state}</p> <div class="mt-3 text-pink-600 text-sm font-medium">
+View Doctors →
+</div> </a>`)} </div> </div> </div> </section> <!-- Search Tips --> <section class="py-16 bg-gray-50"> <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"> <div class="text-center mb-12"> <h2 class="text-3xl font-bold text-gray-900 mb-4">How to Find the Right Gynecologist</h2> <p class="text-lg text-gray-600">Tips for choosing the best women's health specialist</p> </div> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"> <div class="text-center"> <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4"> <svg class="w-8 h-8 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path> </svg> </div> <h3 class="text-xl font-semibold text-gray-900 mb-2">Check Qualifications</h3> <p class="text-gray-600">Look for MBBS, MD (Gynecology) qualifications and board certifications</p> </div> <div class="text-center"> <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4"> <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path> </svg> </div> <h3 class="text-xl font-semibold text-gray-900 mb-2">Read Reviews</h3> <p class="text-gray-600">Check patient reviews and ratings to understand their experience</p> </div> <div class="text-center"> <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"> <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path> </svg> </div> <h3 class="text-xl font-semibold text-gray-900 mb-2">Consider Location</h3> <p class="text-gray-600">Choose a doctor who is easily accessible from your location</p> </div> </div> </div> </section> <!-- Call to Action --> <section class="py-16 bg-gradient-to-r from-pink-600 to-purple-600"> <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center"> <h2 class="text-3xl font-bold text-white mb-4">
+Need Help Finding a Doctor?
+</h2> <p class="text-xl text-pink-100 mb-8">
+Browse all available locations or get personalized recommendations
+</p> <div class="flex flex-col sm:flex-row gap-4 justify-center"> <a href="/" class="bg-white text-pink-600 px-8 py-3 rounded-lg font-semibold hover:bg-pink-50 transition-colors">
+Browse All Locations
+</a> <a href="/contact" class="bg-pink-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-pink-800 transition-colors border border-pink-500">
+Get Recommendations
+</a> </div> </div> </section> </main> ${renderComponent($$result2, "Footer", $$Footer, {})} ` })}`;
+}, "/Users/hirenthakkar/Desktop/gynecologist website/gynecologist-near-me/src/pages/find-doctor.astro", void 0);
+
+const $$file = "/Users/hirenthakkar/Desktop/gynecologist website/gynecologist-near-me/src/pages/find-doctor.astro";
+const $$url = "/find-doctor";
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: $$FindDoctor,
+  file: $$file,
+  url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };

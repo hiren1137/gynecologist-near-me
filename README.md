@@ -233,3 +233,4 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+# Test deployment with Vercel env vars - Tue Jun 24 19:45:12 IST 2025

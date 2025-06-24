@@ -394,15 +394,16 @@ export async function getAllDoctorSlugs(stateSlug: string, citySlug: string): Pr
   return doctors.map(doctor => doctor.slug);
 }
 
-// Get all state-city-doctor combinations
+// Get all state-city-doctor combinations (optimized for Cloudflare Pages)
 export async function getAllStateCityDoctorCombinations(): Promise<Array<{state: string, city: string, doctor: string}>> {
   const combinations: Array<{state: string, city: string, doctor: string}> = [];
   const stateCityCombos = await getAllStateCityCombinations();
   
-  console.log(`📊 Processing ${stateCityCombos.length} cities for doctor pages...`);
+  console.log(`📊 Processing ALL ${stateCityCombos.length} cities for complete doctor coverage...`);
   
-  // Process all cities, but in batches to avoid timeouts
-  const batchSize = 10;
+  // Process cities in efficient batches with parallel processing
+  const batchSize = 15; // Larger batches for better throughput
+  
   for (let i = 0; i < stateCityCombos.length; i += batchSize) {
     const batch = stateCityCombos.slice(i, i + batchSize);
     console.log(`🔄 Processing cities batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(stateCityCombos.length/batchSize)} (${batch.length} cities)`);
@@ -410,10 +411,12 @@ export async function getAllStateCityDoctorCombinations(): Promise<Array<{state:
     const batchPromises = batch.map(async (combo) => {
       try {
         const doctors = await getDoctorsForCity(combo.state, combo.city);
-        const validDoctors = doctors.filter(doctor => doctor.slug && doctor.slug.trim() !== '');
+        const validDoctors = doctors.filter(doctor => 
+          doctor.slug && doctor.slug.trim() !== ''
+        );
         
         if (validDoctors.length > 0) {
-          console.log(`✅ Found ${validDoctors.length} doctors in ${combo.city}`);
+          console.log(`✅ Found ${validDoctors.length} doctors in ${combo.city}, ${combo.state}`);
         }
         
         return validDoctors.map(doctor => ({
@@ -422,21 +425,19 @@ export async function getAllStateCityDoctorCombinations(): Promise<Array<{state:
           doctor: doctor.slug
         }));
       } catch (error) {
-        console.error(`❌ Error fetching doctors for ${combo.state}/${combo.city}:`, error);
+        console.error(`❌ Error processing ${combo.city}, ${combo.state}:`, error);
         return [];
       }
     });
     
     const batchResults = await Promise.all(batchPromises);
-    batchResults.forEach(result => combinations.push(...result));
+    const flatResults = batchResults.flat();
+    combinations.push(...flatResults);
     
-    // Small delay to prevent overwhelming the database
-    if (i + batchSize < stateCityCombos.length) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
+    console.log(`✅ Batch ${Math.floor(i/batchSize) + 1} complete. Total doctor pages so far: ${combinations.length}`);
   }
   
-  console.log(`🎉 Generated ${combinations.length} doctor profile pages`);
+  console.log(`🎉 COMPLETE! Generated ${combinations.length} doctor profile pages from ${stateCityCombos.length} cities`);
   return combinations;
 }
 

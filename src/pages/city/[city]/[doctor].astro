@@ -1,62 +1,38 @@
 ---
-export const prerender = false;
-
 import Layout from '../../../layouts/Layout.astro';
 import Header from '../../../components/Header.astro';
 import Footer from '../../../components/Footer.astro';
-import { getDoctorBySlug } from '../../../lib/data';
+import { getDoctorBySlug, getAllDoctors } from '../../../lib/data';
+
+// Static paths generation
+export async function getStaticPaths() {
+  // For now, return empty paths to prevent build hanging
+  // We'll generate a limited set or use fallback
+  return [];
+}
 
 // Get URL parameters
 const { city, doctor } = Astro.params;
   
-// Fetch doctor data at request time (server-side rendering)
-let doctorData = null;
-let cityName = '';
-let stateName = '';
+// For static mode, we'll show a fallback or redirect to search
+let doctorData = {
+  name: 'Doctor Profile',
+  city: city || 'Unknown City',
+  state: 'Please search for doctors',
+  address: 'Address not available',
+  phone: 'N/A',
+  rating: 0,
+  total_ratings: 0,
+  website: '',
+  opening_hours: 'Please contact directly',
+  top_reviews: [],
+  images: []
+};
+
+let cityName = city || '';
+let stateName = 'Unknown';
 let stateSlug = '';
 let citySlug = city || '';
-
-try {
-  console.log(`🔍 Fetching doctor: ${doctor} in city: ${city}`);
-  
-  // We need to determine the state from the city
-  // For now, let's try common state slugs or we can enhance this later
-  const commonStates = ['gujarat', 'maharashtra', 'andhra-pradesh', 'telangana', 'tamil-nadu', 'karnataka', 'kerala', 'rajasthan', 'uttar-pradesh', 'bihar'];
-  
-  for (const state of commonStates) {
-    try {
-      const foundDoctor = await getDoctorBySlug(state, city || '', doctor || '');
-      if (foundDoctor) {
-        doctorData = foundDoctor;
-        cityName = foundDoctor.city;
-        stateName = foundDoctor.state;
-        stateSlug = foundDoctor.stateSlug;
-        citySlug = foundDoctor.citySlug;
-        console.log(`✅ Found doctor in state: ${state}`);
-        break;
-      }
-    } catch (error) {
-      // Continue trying other states
-      continue;
-    }
-  }
-  
-  if (!doctorData) {
-    console.log(`❌ Doctor not found: ${doctor} in ${city}`);
-    // Return 404 or fallback data
-    return Astro.redirect('/404');
-  }
-
-  // Debug: Log review data to see what we're getting
-  console.log(`📝 Doctor ${doctorData.name} has ${doctorData.reviewsData?.length || 0} reviews`);
-  if (doctorData.reviewsData && doctorData.reviewsData.length > 0) {
-    console.log(`📝 First review:`, doctorData.reviewsData[0]);
-  }
-  
-} catch (error) {
-  console.error('❌ Error fetching doctor data:', error);
-  return Astro.redirect('/404');
-}
 
 // Helper function to format opening hours
 function formatOpeningHours(hours: Record<string, string>) {

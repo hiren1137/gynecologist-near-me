@@ -4,6 +4,9 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { dbHelpers } from '../lib/supabase.js';
 
+// This page will be pre-generated (static) at build time
+export const prerender = true;
+
 export async function getStaticPaths() {
   const states = await dbHelpers.getStates();
   

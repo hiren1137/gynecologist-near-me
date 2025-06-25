@@ -3,6 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { indianStates, topCities } from '../data/states.js';
+
+// This page will be pre-generated (static) at build time
+export const prerender = true;
 ---
 
 <Layout title="Gynecologist Near Me - Find Best Women's Healthcare Specialists in India">

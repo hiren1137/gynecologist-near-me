@@ -4,6 +4,9 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { getAllStateCityCombinations, getDoctorsForCity } from '../../lib/data';
 
+// This page will be pre-generated (static) at build time
+export const prerender = true;
+
 export async function getStaticPaths() {
   const combinations = await getAllStateCityCombinations();
   

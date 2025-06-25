@@ -2,19 +2,25 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center h-16">
       <!-- Logo and Brand -->
-      <div class="flex items-center">
-        <a href="/" class="flex items-center space-x-2">
-          <div class="w-8 h-8 bg-pink-600 rounded-lg flex items-center justify-center">
+      <div class="flex items-center flex-1 min-w-0">
+        <a href="/" class="flex items-center space-x-2 min-w-0">
+          <div class="w-8 h-8 bg-pink-600 rounded-lg flex items-center justify-center flex-shrink-0">
             <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
             </svg>
           </div>
-          <div class="hidden sm:block">
-            <h1 class="text-xl font-bold text-gray-900">Gynecologist Near Me</h1>
-            <p class="text-xs text-gray-500">Find Expert Women's Healthcare</p>
+          <!-- Desktop title -->
+          <div class="hidden md:block min-w-0">
+            <h1 class="text-xl font-bold text-gray-900 whitespace-nowrap">Gynecologist Near Me</h1>
+            <p class="text-xs text-gray-500 whitespace-nowrap">Find Expert Women's Healthcare</p>
           </div>
-          <div class="sm:hidden">
-            <h1 class="text-lg font-bold text-gray-900">Gynecologist</h1>
+          <!-- Tablet title -->
+          <div class="hidden sm:block md:hidden min-w-0">
+            <h1 class="text-lg font-bold text-gray-900 whitespace-nowrap">Gynecologist Near Me</h1>
+          </div>
+          <!-- Mobile title -->
+          <div class="sm:hidden min-w-0 flex-1">
+            <h1 class="text-base font-bold text-gray-900 truncate">Gynecologist Near Me</h1>
           </div>
         </a>
       </div>
@@ -27,16 +33,19 @@
       </nav>
 
       <!-- Desktop CTA & Mobile Menu Button -->
-      <div class="flex items-center space-x-4">
-        <a href="/find-doctor" class="hidden sm:inline-flex bg-pink-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-pink-700 transition-colors">
+      <div class="flex items-center space-x-2 flex-shrink-0">
+        <a href="/find-doctor" class="hidden md:inline-flex bg-pink-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-pink-700 transition-colors">
           Find Doctor
         </a>
-        <a href="/find-doctor" class="sm:hidden bg-pink-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-pink-700 transition-colors">
+        <a href="/find-doctor" class="hidden sm:inline-flex md:hidden bg-pink-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-pink-700 transition-colors">
+          Find
+        </a>
+        <a href="/find-doctor" class="sm:hidden bg-pink-600 text-white px-2 py-2 rounded-lg text-xs font-medium hover:bg-pink-700 transition-colors">
           Find
         </a>
         
         <!-- Mobile menu button -->
-        <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
+        <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 flex-shrink-0">
           <svg id="menu-icon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>

@@ -180,6 +180,30 @@
     font-size: 16px;
     border-radius: 8px;
   }
+  
+  /* Mobile Header Fixes */
+  /* Ensure header content doesn't overflow */
+  header .max-w-7xl {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  
+  /* Better mobile title spacing */
+  header h1 {
+    font-size: 0.9rem;
+    line-height: 1.2;
+    max-width: calc(100vw - 120px); /* Leave space for logo and button */
+  }
+  
+  /* Prevent header content from wrapping */
+  header .flex.justify-between {
+    flex-wrap: nowrap;
+  }
+  
+  /* Ensure logo and button don't shrink */
+  header .flex-shrink-0 {
+    flex-shrink: 0;
+  }
 }
 
 /* Tablet optimizations */
@@ -194,6 +218,13 @@
   
   .gallery-tablet {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Tablet specific adjustments */
+@media (min-width: 641px) and (max-width: 768px) {
+  header h1 {
+    font-size: 1rem;
   }
 }
 

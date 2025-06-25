@@ -111,20 +111,21 @@ const openingHours = formatOpeningHours(doctorInfo.openingHours);
     <!-- Breadcrumb -->
     <nav class="bg-white border-b border-gray-200 py-3">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center space-x-2 text-sm text-gray-600 overflow-x-auto">
-          <a href="/" class="hover:text-pink-600 whitespace-nowrap">Home</a>
-          <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+        <!-- Mobile-optimized breadcrumb with horizontal scroll -->
+        <div class="flex items-center space-x-2 text-sm text-gray-600 overflow-x-auto pb-1">
+          <a href="/" class="hover:text-pink-600 whitespace-nowrap flex-shrink-0">Home</a>
+          <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
           </svg>
-          <a href={`/${stateSlug}`} class="hover:text-pink-600 whitespace-nowrap">{stateName}</a>
-          <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <a href={`/${stateSlug}`} class="hover:text-pink-600 whitespace-nowrap flex-shrink-0 hidden sm:block">{stateName}</a>
+          <svg class="w-3 h-3 flex-shrink-0 hidden sm:block" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
           </svg>
-          <a href={`/city/${citySlug}`} class="hover:text-pink-600 whitespace-nowrap">{cityName}</a>
-          <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <a href={`/city/${citySlug}`} class="hover:text-pink-600 whitespace-nowrap flex-shrink-0">{cityName}</a>
+          <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
           </svg>
-          <span class="text-pink-600 font-medium truncate">{doctorInfo.name}</span>
+          <span class="text-pink-600 font-medium flex-shrink-0 max-w-[150px] truncate">{doctorInfo.name}</span>
         </div>
       </div>
     </nav>
@@ -160,10 +161,10 @@ const openingHours = formatOpeningHours(doctorInfo.openingHours);
 
           <!-- Doctor Info -->
           <div class="flex-1">
-            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6">
+            <div class="flex flex-col mb-6">
               <div class="flex-1">
-                <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-3">{doctorInfo.name}</h1>
-                <p class="text-lg text-gray-600 mb-3">{doctorInfo.qualification}</p>
+                <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2">{doctorInfo.name}</h1>
+                <p class="text-base sm:text-lg text-gray-600 mb-3">{doctorInfo.qualification}</p>
                 
                 <!-- Rating -->
                 <div class="flex items-center mb-3">
@@ -198,35 +199,37 @@ const openingHours = formatOpeningHours(doctorInfo.openingHours);
             </div>
               </div>
 
-              <!-- Action Buttons -->
-              <div class="mt-4 sm:mt-0 sm:ml-6 flex flex-col space-y-3 w-full sm:w-auto">
-                {doctorInfo.phone && (
-                  <a href={`tel:${doctorInfo.phone}`} class="bg-pink-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-pink-700 transition-colors text-center flex items-center justify-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                    </svg>
-                    Call Now
-                  </a>
-                )}
-                
-                {doctorInfo.locationUrl && (
-                  <a href={doctorInfo.locationUrl} target="_blank" rel="noopener noreferrer" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-center flex items-center justify-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
-                    </svg>
-                    Get Directions
-                  </a>
-                )}
-                
-                {doctorInfo.website && (
-                  <a href={`${doctorInfo.website}?ref=https://www.gynecologistnearme.in/`} target="_blank" rel="noopener noreferrer" class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors text-center flex items-center justify-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                    </svg>
-                    Visit Website
-                  </a>
-                )}
-              </div>
+            </div>
+            
+            <!-- Mobile-optimized Action Buttons -->
+            <div class="mt-6 flex flex-col sm:flex-row gap-3">
+              {doctorInfo.phone && (
+                <a href={`tel:${doctorInfo.phone}`} class="bg-pink-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-pink-700 transition-colors text-center flex items-center justify-center text-sm sm:text-base">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                  </svg>
+                  Call Now
+                </a>
+              )}
+              
+              {doctorInfo.locationUrl && (
+                <a href={doctorInfo.locationUrl} target="_blank" rel="noopener noreferrer" class="bg-blue-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-center flex items-center justify-center text-sm sm:text-base">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                  </svg>
+                  <span class="hidden sm:inline">Get Directions</span>
+                  <span class="sm:hidden">Directions</span>
+                </a>
+              )}
+              
+              {doctorInfo.website && (
+                <a href={`${doctorInfo.website}?ref=https://www.gynecologistnearme.in/`} target="_blank" rel="noopener noreferrer" class="bg-green-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors text-center flex items-center justify-center text-sm sm:text-base">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                  Website
+                </a>
+              )}
             </div>
 
             <!-- Quick Stats - Removed Experience -->

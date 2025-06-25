@@ -1,1 +1,234 @@
 @import "tailwindcss";
+
+/* Mobile-first CSS optimizations */
+
+/* Ensure proper text wrapping on mobile */
+@media (max-width: 640px) {
+  /* Better line height for mobile reading */
+  body {
+    line-height: 1.6;
+  }
+  
+  /* Prevent text overflow */
+  h1, h2, h3, h4, h5, h6 {
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  /* Better mobile button sizing */
+  .btn-mobile {
+    min-height: 44px; /* iOS recommended touch target size */
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  /* Improved card spacing on mobile */
+  .doctor-card {
+    margin-bottom: 1rem;
+  }
+  
+  /* Better form inputs on mobile */
+  input, select, textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+    padding: 12px;
+  }
+  
+  /* Mobile-optimized images */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Improved mobile navigation */
+  .mobile-nav-item {
+    padding: 12px 16px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Better mobile breadcrumbs */
+  .breadcrumb-mobile {
+    font-size: 14px;
+    padding: 8px 0;
+  }
+  
+  /* Scrollable containers */
+  .horizontal-scroll {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .horizontal-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Mobile-specific spacing */
+  .section-mobile {
+    padding: 2rem 1rem;
+  }
+  
+  .hero-mobile {
+    padding: 1.5rem 1rem;
+  }
+  
+  /* Better mobile card layout */
+  .card-mobile {
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Mobile doctor profile optimizations */
+  .doctor-profile-mobile {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .doctor-actions-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+  
+  .doctor-actions-mobile a {
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  
+  /* Mobile ratings and reviews */
+  .rating-mobile {
+    font-size: 14px;
+  }
+  
+  .review-mobile {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+  }
+  
+  /* Mobile specialization tags */
+  .specialization-tag-mobile {
+    font-size: 12px;
+    padding: 4px 8px;
+    margin: 2px;
+  }
+  
+  /* Mobile contact information */
+  .contact-mobile {
+    word-break: break-all;
+    font-size: 14px;
+  }
+  
+  /* Mobile gallery optimizations */
+  .gallery-mobile {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  
+  /* Mobile quick stats */
+  .stats-mobile {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .stat-card-mobile {
+    padding: 1rem;
+    text-align: center;
+    border-radius: 8px;
+  }
+  
+  /* Mobile header optimizations */
+  .header-mobile {
+    padding: 0.75rem 1rem;
+  }
+  
+  .logo-mobile {
+    font-size: 16px;
+  }
+  
+  /* Mobile footer optimizations */
+  .footer-mobile {
+    padding: 2rem 1rem;
+    text-align: center;
+  }
+  
+  /* Mobile table responsiveness */
+  .table-mobile {
+    font-size: 14px;
+  }
+  
+  /* Mobile opening hours */
+  .hours-mobile {
+    font-size: 13px;
+    padding: 0.5rem 0;
+  }
+  
+  /* Mobile city grid */
+  .city-grid-mobile {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  /* Mobile search optimizations */
+  .search-mobile {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .stats-tablet {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .city-grid-tablet {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .gallery-tablet {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Focus and accessibility improvements */
+a:focus, button:focus, input:focus, select:focus, textarea:focus {
+  outline: 2px solid #ec4899;
+  outline-offset: 2px;
+}
+
+/* Dark mode support (if needed) */
+@media (prefers-color-scheme: dark) {
+  .dark-mode-card {
+    background-color: #1f2937;
+    border-color: #374151;
+    color: #f9fafb;
+  }
+}
+
+/* Motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-optimize {
+    background: white !important;
+    color: black !important;
+  }
+}

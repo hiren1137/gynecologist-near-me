@@ -1,0 +1,92 @@
+name: Build All Pages (7800 Doctors)
+
+on:
+  workflow_dispatch:  # Manual trigger only
+    inputs:
+      runner_size:
+        description: 'Runner size (larger = faster but more expensive)'
+        required: true
+        default: 'ubuntu-latest-8-cores'
+        type: choice
+        options:
+          - ubuntu-latest-4-cores
+          - ubuntu-latest-8-cores
+          - ubuntu-latest-16-cores
+
+jobs:
+  build-all-pages:
+    runs-on: ${{ github.event.inputs.runner_size }}
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: 🔧 Install dependencies
+        run: npm ci
+        
+      - name: 🌍 Setup environment variables
+        run: |
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> $GITHUB_ENV
+          echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> $GITHUB_ENV
+          
+      - name: 📝 Update build configuration for ALL pages
+        run: |
+          # Backup current doctor page
+          cp src/pages/city/[city]/[doctor].astro src/pages/city/[city]/[doctor].astro.backup
+          
+          # Update to build ALL doctors (remove limit)
+          sed -i.bak 's/getDoctorsWithLimit(500)/getDoctorsWithLimit(7800)/g' src/pages/city/[city]/[doctor].astro
+          
+          echo "✅ Updated to build ALL 7,800 doctor pages"
+          
+      - name: 🏗️ Build all pages
+        run: |
+          echo "🚀 Starting build of ALL pages..."
+          echo "📊 Expected: ~7,800 doctor pages + 312 city pages + 31 state pages"
+          echo "⏱️ Estimated time: 20-40 minutes"
+          
+          # Build with verbose output
+          npm run build -- --verbose
+          
+      - name: 📊 Build summary
+        run: |
+          echo "📈 Build completed!"
+          echo "📁 Total files in dist/:"
+          find dist -type f -name "*.html" | wc -l
+          echo "📦 Total build size:"
+          du -sh dist/
+          
+      - name: 📤 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: complete-static-site-${{ github.run_number }}
+          path: dist/
+          retention-days: 30
+          compression-level: 6
+          
+      - name: 🔄 Restore original configuration
+        if: always()
+        run: |
+          # Restore original doctor page configuration
+          if [ -f "src/pages/city/[city]/[doctor].astro.backup" ]; then
+            mv src/pages/city/[city]/[doctor].astro.backup src/pages/city/[city]/[doctor].astro
+            echo "✅ Restored original configuration"
+          fi
+          
+      - name: 📋 Build report
+        if: always()
+        run: |
+          echo "🎯 Build Report:"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📊 Runner: ${{ github.event.inputs.runner_size }}"
+          echo "⏱️ Build time: ${{ steps.build.outputs.build-time }}"
+          echo "📁 Total pages: $(find dist -name "*.html" 2>/dev/null | wc -l || echo 'Build failed')"
+          echo "💾 Build size: $(du -sh dist/ 2>/dev/null | cut -f1 || echo 'N/A')"
+          echo "🔗 Download artifacts from: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" 

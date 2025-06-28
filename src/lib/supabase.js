@@ -433,37 +433,74 @@ export const dbHelpers = {
   },
 
   // Get doctors with limit for sitemap generation
-  async getDoctorsWithLimit(limit = 1000) {
+  async getDoctorsWithLimit(limit = 10000) {
     try {
-      const { data, error } = await dataClient
-        .from('gynecologists_stage')
-        .select('id, name, city, state')
-        .not('name', 'is', null)
-        .not('city', 'is', null)
-        .order('rating', { ascending: false })
-        .limit(limit);
+      // Get all doctors with all necessary fields for doctor profile pages
+      let allDoctors = [];
+      let from = 0;
+      const pageLimit = 1000;
+      const maxPages = Math.ceil(limit / pageLimit);
       
-      if (error) throw error;
+      for (let page = 0; page < maxPages; page++) {
+        const { data, error } = await dataClient
+          .from('gynecologists_stage')
+          .select('*') // Get all fields to ensure nothing is missing
+          .not('name', 'is', null)
+          .not('city', 'is', null)
+          .order('rating', { ascending: false })
+          .order('name', { ascending: true })
+          .range(from, from + pageLimit - 1);
+        
+        if (error) {
+          console.error(`Error fetching doctors page ${page + 1}:`, error);
+          break;
+        }
+        
+        if (!data || data.length === 0) break;
+        
+        allDoctors.push(...data);
+        from += pageLimit;
+        
+        // Add small delay between requests
+        if (page < maxPages - 1 && data.length === pageLimit) {
+          await new Promise(resolve => setTimeout(resolve, 200));
+        }
+        
+        if (data.length < pageLimit) break;
+        if (allDoctors.length >= limit) break;
+      }
       
-      // Create slugs for doctors
-      return data.map(doctor => ({
-        ...doctor,
-        slug: doctor.name
-          .replace(/dr\.?\s*/gi, 'dr-')
-          .toLowerCase()
-          .replace(/[^a-z0-9\s-]/g, '')
-          .replace(/\s+/g, '-')
-          .replace(/-+/g, '-')
-          .replace(/^-|-$/g, '')
-          .trim(),
-        city_slug: doctor.city
-          .toLowerCase()
-          .replace(/[^a-z0-9\s-]/g, '')
-          .replace(/\s+/g, '-')
-          .replace(/-+/g, '-')
-          .replace(/^-|-$/g, '')
-          .trim()
-      }));
+      // Create slugs for doctors and filter out invalid ones
+      const doctorsWithSlugs = allDoctors.slice(0, limit)
+        .filter(doctor => doctor.name && doctor.city && doctor.name.trim() && doctor.city.trim())
+        .map(doctor => {
+          const slug = doctor.name
+            .replace(/dr\.?\s*/gi, 'dr-')
+            .toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '')
+            .trim();
+          
+          const city_slug = doctor.city
+            .toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '')
+            .trim();
+          
+          return {
+            ...doctor,
+            slug,
+            city_slug
+          };
+        })
+        .filter(doctor => doctor.slug && doctor.city_slug && doctor.slug.length > 0 && doctor.city_slug.length > 0);
+      
+      console.log(`✅ Fetched ${doctorsWithSlugs.length} doctors for profile pages`);
+      return doctorsWithSlugs;
     } catch (error) {
       console.error('Error fetching doctors with limit:', error);
       return [];
@@ -647,5 +684,5 @@ export const dbHelpers = {
         averageRating: 4.8
       }
     }
-  }
+  },
 } 

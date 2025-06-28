@@ -47,20 +47,29 @@ export const prerender = true;
     </section>
 
     <!-- Moving Top Cities Section -->
-    <section class="py-8 bg-white border-b border-gray-200 overflow-hidden">
+    <section class="py-8 bg-white border-b border-gray-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-2xl font-bold text-center text-gray-900 mb-6">Top Cities</h2>
+        <h2 class="text-2xl font-bold text-center text-gray-900 mb-8">Top Cities</h2>
         <div class="relative">
-          <div class="flex animate-scroll space-x-4">
-            {topCities.concat(topCities).map((city) => (
-              <a 
-                href={`/city/${city.toLowerCase().replace(/\s+/g, '-')}`}
-                class="flex-shrink-0 bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-full font-medium hover:from-pink-600 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg"
-              >
-                {city}
-              </a>
-            ))}
+          <!-- Scrollable Cities Container -->
+          <div 
+            id="cities-container" 
+            class="overflow-x-auto scrollbar-hide scroll-smooth cursor-grab active:cursor-grabbing"
+            style="scrollbar-width: none; -ms-overflow-style: none;"
+          >
+            <div class="flex space-x-4 py-4 px-2">
+              {topCities.concat(topCities).map((city) => (
+                <a 
+                  href={`/city/${city.toLowerCase().replace(/\s+/g, '-')}`}
+                  class="flex-shrink-0 bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-full font-medium hover:from-pink-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg whitespace-nowrap select-none"
+                >
+                  {city}
+                </a>
+              ))}
+            </div>
           </div>
+          
+
         </div>
       </div>
     </section>
@@ -184,20 +193,198 @@ export const prerender = true;
 </Layout>
 
 <style>
-  @keyframes scroll {
-    0% {
-      transform: translateX(0);
+  /* Hide scrollbar for cities container */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+  
+  /* Smooth scrolling behavior */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+  
+  /* Enhanced cities container styling */
+  #cities-container {
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+  
+  #cities-container:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Drag cursor states */
+  #cities-container.cursor-grab {
+    cursor: grab;
+  }
+  
+  #cities-container.active\:cursor-grabbing:active {
+    cursor: grabbing;
+  }
+  
+  /* City links enhanced styling */
+  #cities-container a {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+  
+  /* Scroll indicator animation */
+  .scroll-indicator {
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 0.6;
     }
-    100% {
-      transform: translateX(-50%);
+    50% {
+      opacity: 1;
     }
   }
   
-  .animate-scroll {
-    animation: scroll 30s linear infinite;
-  }
-  
-  .animate-scroll:hover {
-    animation-play-state: paused;
+  /* Mobile touch improvements */
+  @media (max-width: 768px) {
+    #cities-container {
+      -webkit-overflow-scrolling: touch;
+    }
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('cities-container');
+    
+    if (container) {
+      let autoScrollInterval;
+      let userInteracted = false;
+      let isScrolling = false;
+      
+      // Smooth scroll function with easing
+      function smoothScrollTo(targetPosition, duration = 800) {
+        if (isScrolling) return;
+        isScrolling = true;
+        
+        const startPosition = container.scrollLeft;
+        const distance = targetPosition - startPosition;
+        const startTime = performance.now();
+        
+        function easeInOutCubic(t) {
+          return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+        }
+        
+        function animate(currentTime) {
+          const timeElapsed = currentTime - startTime;
+          const progress = Math.min(timeElapsed / duration, 1);
+          const easedProgress = easeInOutCubic(progress);
+          
+          container.scrollLeft = startPosition + (distance * easedProgress);
+          
+          if (progress < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            isScrolling = false;
+          }
+        }
+        
+        requestAnimationFrame(animate);
+      }
+      
+      // Auto-scroll functionality
+      function startAutoScroll() {
+        if (userInteracted) return;
+        
+        autoScrollInterval = setInterval(() => {
+          const scrollLeft = container.scrollLeft;
+          const scrollWidth = container.scrollWidth;
+          const clientWidth = container.clientWidth;
+          const maxScroll = scrollWidth - clientWidth;
+          
+          if (scrollLeft >= maxScroll - 5) {
+            // Reset to beginning with smooth animation
+            smoothScrollTo(0, 1200);
+          } else {
+            // Continue scrolling right with smooth increments
+            const scrollAmount = Math.min(clientWidth * 0.4, 200);
+            const targetPosition = Math.min(maxScroll, scrollLeft + scrollAmount);
+            smoothScrollTo(targetPosition, 800);
+          }
+        }, 4500); // Auto-scroll every 4.5 seconds
+      }
+      
+      function stopAutoScroll() {
+        if (autoScrollInterval) {
+          clearInterval(autoScrollInterval);
+          autoScrollInterval = null;
+        }
+      }
+      
+      // Start auto-scroll after a delay
+      setTimeout(startAutoScroll, 3000);
+      
+      // Pause auto-scroll on hover
+      container.addEventListener('mouseenter', function() {
+        stopAutoScroll();
+      });
+      
+      container.addEventListener('mouseleave', function() {
+        if (!userInteracted) {
+          setTimeout(startAutoScroll, 2000);
+        }
+      });
+      
+      // Stop auto-scroll permanently when user manually scrolls
+      container.addEventListener('scroll', function() {
+        if (!isScrolling) {
+          userInteracted = true;
+          stopAutoScroll();
+        }
+      });
+      
+      // Touch and mouse drag support for better mobile experience
+      let isDragging = false;
+      let startX;
+      let scrollStart;
+      
+      container.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        startX = e.pageX - container.offsetLeft;
+        scrollStart = container.scrollLeft;
+        container.style.cursor = 'grabbing';
+        userInteracted = true;
+        stopAutoScroll();
+      });
+      
+      container.addEventListener('mouseleave', function() {
+        isDragging = false;
+        container.style.cursor = 'grab';
+      });
+      
+      container.addEventListener('mouseup', function() {
+        isDragging = false;
+        container.style.cursor = 'grab';
+      });
+      
+      container.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - container.offsetLeft;
+        const walk = (x - startX) * 2;
+        container.scrollLeft = scrollStart - walk;
+      });
+      
+      // Touch support for mobile
+      container.addEventListener('touchstart', function() {
+        userInteracted = true;
+        stopAutoScroll();
+      });
+    }
+  });
+</script>

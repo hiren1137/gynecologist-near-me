@@ -83,6 +83,41 @@ const locationUrl = doctorData.place_id
     ? `https://www.google.com/maps/search/?api=1&query=${doctorData.latitude},${doctorData.longitude}`
     : '');
 
+// Parse opening hours from database
+function parseOpeningHours(hoursString) {
+  const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  const hours = {};
+  
+  if (!hoursString || hoursString === 'N/A') {
+    days.forEach(day => hours[day] = '9:00 AM - 6:00 PM');
+    return hours;
+  }
+  
+  if (hoursString.includes('Open 24 hours')) {
+    days.forEach(day => hours[day] = 'Open 24 hours');
+    return hours;
+  }
+  
+  // Parse the hours string
+  const dayPattern = /(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday): ([^;]+)/g;
+  let match;
+  
+  while ((match = dayPattern.exec(hoursString)) !== null) {
+    const day = match[1].toLowerCase();
+    const time = match[2].trim();
+    hours[day] = time;
+  }
+  
+  // Fill missing days with default hours
+  days.forEach(day => {
+    if (!hours[day]) {
+      hours[day] = '9:00 AM - 6:00 PM';
+    }
+  });
+  
+  return hours;
+}
+
 // Transform the raw database data to match our expected format
 const transformedDoctor = {
   id: doctorData.id,
@@ -102,15 +137,7 @@ const transformedDoctor = {
   phone: (doctorData.phone && doctorData.phone !== 'N/A') ? doctorData.phone : '',
   website: (doctorData.website && doctorData.website !== 'N/A') ? doctorData.website : '',
   images: parseImageUrls(doctorData.image_urls), // Parse actual images from database
-  openingHours: {
-    monday: '9:00 AM - 6:00 PM',
-    tuesday: '9:00 AM - 6:00 PM',
-    wednesday: '9:00 AM - 6:00 PM',
-    thursday: '9:00 AM - 6:00 PM',
-    friday: '9:00 AM - 6:00 PM',
-    saturday: '9:00 AM - 2:00 PM',
-    sunday: 'Closed'
-  },
+  openingHours: parseOpeningHours(doctorData.opening_hours), // Parse actual opening hours from database
   about: `${doctorData.name?.replace(/ - .*$/, '') || 'This healthcare provider'} is a highly qualified gynecologist providing comprehensive women's healthcare services. Expert care in obstetrics, gynecology, and women's health with a focus on patient comfort and advanced medical care.`,
   latitude: parseFloat(doctorData.latitude) || 0,
   longitude: parseFloat(doctorData.longitude) || 0,
